@@ -3,6 +3,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
+
 public class Ilsottomarino_bot extends TelegramLongPollingBot{
 
     public void onUpdateReceived(Update update) {
@@ -30,15 +32,19 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot{
 
 
             System.out.println("porcamadojnna");
-            msg.setText("porcamadonna");
+            HTMLreader h = new HTMLreader();
+           ArrayList<String> articoli = h.agisci("https://thesubmarine.it/2019/03/24/un-milione-in-piazza-contro-la-brexit/");
+
+
+            //   msg.setText("porcamadonna");
             msg.setChatId(update.getMessage().getChatId());
 
 
             try {
 
-                for (int i = 0; i < 10; i++) {
-
-                    execute(msg);
+                for (int i = 0; i < articoli.size(); i++) {
+                 if(articoli.get(i)!= null && !articoli.get(i).equals("")){   msg.setText(articoli.get(i));
+                    execute(msg);}
                 }
 
             } catch (TelegramApiException e) {

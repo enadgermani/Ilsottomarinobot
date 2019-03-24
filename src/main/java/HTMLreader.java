@@ -5,9 +5,17 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.ArrayList;
+
 
 public class HTMLreader {
-    public static void main(String[] args) {
+    public HTMLreader(){
+
+    }
+    public HTMLreader(String link){
+
+    }
+    public ArrayList<String> agisci(String link) {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\fisso\\Downloads\\chromedriver_win32\\chromedriver.exe");
 
         WebDriver wd = new ChromeDriver();
@@ -26,14 +34,21 @@ public class HTMLreader {
         Document doc = Jsoup.parse(cut);
         Elements p = doc.select("p");
 
+        ArrayList<String> articoli = new ArrayList<String>();
+        String s="";
+        String s1="";
         for (Element par : p) {
-            System.out.println(par.text());
+            s =par.text();
             Elements a = par.select("a[href]");
             for (Element links : a) {
-                System.out.println(links.attr("href"));
+                s1=s1.concat("  ");
+                s1= s1.concat(links.attr("href"));
             }
+         articoli.add(s+s1);
+            s="";
+            s1="";
         }
-
+    return articoli;
     }
 
 }
