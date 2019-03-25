@@ -4,11 +4,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class Ilsottomarino_bot extends TelegramLongPollingBot {
     int timer = 5;
+    String botToken="";   //inserire qui la stringa bot token
 
     public void onUpdateReceived(Update update) {
         System.out.println(update.getMessage().getText());
@@ -99,7 +99,7 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
             }
 
             public String getBotToken () {
-                return "763191121:AAHtYs_DNdnL-R0DITBtbU61msE0vhAG4kA";
+                return botToken;
 
 
             }
@@ -111,3 +111,5 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
 
 
     }
+
+    //"763191121:AAHtYs_DNdnL-R0DITBtbU61msE0vhAG4kA" bot token
