@@ -2,14 +2,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.ArrayList;
-
-import static org.openqa.selenium.By.className;
 
 
 public class HTMLreader {
@@ -32,15 +28,14 @@ public class HTMLreader {
         String prova = findLink();
         System.out.println(prova);
 
-        System.out.println("arrivo qui");
         wd.close();
-
         wd2 = new ChromeDriver();
         wd2.get(prova);
-        System.out.println("arrivo qua");
+        System.out.println("seconda pagina trovata");
 
 
         String source = wd2.getPageSource();
+        System.out.println("seconda html trovata");
 
         int inizio = source.indexOf("<h3><b><em>Questa " +
                 "è </em>Hello, World!, <em>la nostra rassegna mattiniera di attualità, cultura e internet." +
@@ -50,6 +45,9 @@ public class HTMLreader {
 
         String cut = source.substring((inizio + 188), (fine - 3)) + "§";
 
+        System.out.println("inizio" + inizio);
+        System.out.println("fine" + fine);
+        //  System.out.println(cut);
 
         Document doc = Jsoup.parse(cut);
         Elements p = doc.select("p");
@@ -63,16 +61,17 @@ public class HTMLreader {
             for (Element links : a) {
                 s1 = s1.concat("  ");
                 s1 = s1.concat(links.attr("href"));
+                //      System.out.println(s + s1);
+                articoli.add(s + s1);
+                s = "";
+                s1 = "";
             }
-            articoli.add(s + s1);
-            s = "";
-            s1 = "";
         }
         return articoli;
+
     }
-
-
     public String findLink() {
+        System.out.println("cerco il link");
         String base = "https://thesubmarine.it/author/redazione/";
         wd.get(base);
         String html = wd.getPageSource();
@@ -83,7 +82,7 @@ public class HTMLreader {
                 Document doc = Jsoup.parse(html2);
         Elements p = doc.select("h2");
 
-        ArrayList<String> articoli = new ArrayList<String>();
+   //     ArrayList<String> articoliRedazione = new ArrayList<String>();
         String s = "";
         String s1 = "";
         for (Element par : p) {
@@ -93,6 +92,7 @@ public class HTMLreader {
                 s1 = s1.concat("  ");
                 s1 = s1.concat(links.attr("href"));
             }
+            System.out.println("link non ancora trovato");
            return s1;
            // s = "";
         //    s1 = "";
