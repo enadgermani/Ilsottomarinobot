@@ -1,16 +1,15 @@
+
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
 public class HTMLreader {
-    WebDriver wd;
-    WebDriver wd2;
 
     public HTMLreader() {
 
@@ -21,20 +20,29 @@ public class HTMLreader {
 
     }
 
+
     public ArrayList<String> agisci() {
 
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\enad\\Downloads\\chromedriver_win32 (1)\\chromedriver.exe");
-        wd = new ChromeDriver();
+
         String prova = findLink();
         System.out.println(prova);
 
-        wd.close();
-        wd2 = new ChromeDriver();
-        wd2.get(prova);
-        System.out.println("seconda pagina trovata");
+        Document d = null;
+        try {
+            d = Jsoup.connect(prova).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String html = d.toString();
 
 
-        String source = wd2.getPageSource();
+        Document d2 = null;
+        try {
+            d2 = Jsoup.connect(prova).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String source = d2.toString();
         System.out.println("seconda html trovata");
 
         int inizio = source.indexOf("<h3><b><em>Questa " +
@@ -71,31 +79,39 @@ public class HTMLreader {
 
     }
     public String findLink() {
+
         System.out.println("cerco il link");
         String base = "https://thesubmarine.it/author/redazione/";
-        wd.get(base);
-        String html = wd.getPageSource();
-      //  System.out.println(html);
+        //   wd.get(base);
+        //   String html = wd.getPageSource();
+        //  System.out.println(html);
 
-     String  html2 = html.substring(html.indexOf("div id=\"cb-content\" class=\"wrap cb-author-page cb-wrap-pad clearfix\">"));
+        Document d = null;
+        try {
+            d = Jsoup.connect(base).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String html = d.toString();
+        String html2 = html.substring(html.indexOf("div id=\"cb-content\" class=\"wrap cb-author-page cb-wrap-pad clearfix\">"));
 
-                Document doc = Jsoup.parse(html2);
+        Document doc = Jsoup.parse(html2);
         Elements p = doc.select("h2");
 
-   //     ArrayList<String> articoliRedazione = new ArrayList<String>();
+        //     ArrayList<String> articoliRedazione = new ArrayList<String>();
         String s = "";
         String s1 = "";
         for (Element par : p) {
             s = par.text();
             Elements a = par.select("a[href]");
             for (Element links : a) {
-                s1 = s1.concat("  ");
+                s1 = s1.concat("");
                 s1 = s1.concat(links.attr("href"));
             }
             System.out.println("link non ancora trovato");
-           return s1;
-           // s = "";
-        //    s1 = "";
+            return s1;
+            // s = "";
+            //    s1 = "";
         }
 
 
