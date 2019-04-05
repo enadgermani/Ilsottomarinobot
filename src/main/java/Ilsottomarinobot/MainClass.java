@@ -1,7 +1,6 @@
 package Ilsottomarinobot;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,7 +10,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
     public class MainClass{
 //            implements RequestHandler<InputStream, String> {
-        private static final ObjectMapper MAPPER = new ObjectMapper();
+      //  private static final ObjectMapper MAPPER = new ObjectMapper();
 
 
         public static void main (String []args) {

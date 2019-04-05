@@ -13,7 +13,7 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
     int timer = 5;
     String botToken="763191121:AAHtYs_DNdnL-R0DITBtbU61msE0vhAG4kA";   //inserire qui la stringa bot token
     ArrayList<String> articoli = new ArrayList<String>();
-
+    boolean reversed = false;
 
 
 
@@ -73,20 +73,17 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
 
             System.out.println("porcamadojnna");
 
-            //  Collections.reverse(articoli);
+            if(reversed) {
+                Collections.reverse(articoli);
+                reversed = true;
+            }
 
             //   msg.setText("porcamadonna");
             msg.setChatId(update.getMessage().getChatId());
-          //  msg.setParseMode("html");
+            msg.setParseMode("html");
             msg.setText("<b>Questa " +
                     "è Hello, World!, la nostra rassegna mattiniera di attualità, cultura e internet." +
                     "Tutte le mattine, un pugno di link da leggere, vedere e ascoltare.</b>");
-
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println(articoli);
 
             try {
                 execute(msg);
@@ -94,7 +91,7 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
                 e.printStackTrace();
             }
 
-        //    msg.setParseMode("html");
+          //  msg.setParseMode();
 
             try {
 
@@ -112,9 +109,17 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            msg.setText("E' stato un piacere");
+
+            try {
+                execute(msg);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
 
 
+//mandamandamandansdasndnasdnasndnasndansdnasddddddddasddddddddddddddddddddddd
         if (command.equals("/manda_tutto_insieme")) {
             SendMessage  msg = new SendMessage();
 
@@ -128,9 +133,10 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
             HTMLreader h = new HTMLreader();
             ArrayList<String> articoli = h.agisci();
          */
+        if(!reversed) {
             Collections.reverse(articoli);
-
-
+            reversed = true;
+        }
             //   msg.setText("porcamadonna");
             msg.setChatId(update.getMessage().getChatId());
             msg.setParseMode("html");
@@ -160,6 +166,14 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
 
             }
 
+            msg.setText("E' stato un piacere");
+
+            try {
+                execute(msg);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -174,6 +188,7 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
 
 
             }
+
 
             public String creaLink () {
                 return null;
