@@ -1,3 +1,4 @@
+package Ilsottomarinobot;
 
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,6 +13,9 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
     int timer = 5;
     String botToken="763191121:AAHtYs_DNdnL-R0DITBtbU61msE0vhAG4kA";   //inserire qui la stringa bot token
     ArrayList<String> articoli = new ArrayList<String>();
+
+
+
 
     public void onUpdateReceived(Update update) {
         System.out.println(update.getMessage().getText());
@@ -159,6 +163,8 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
         }
 
     }
+
+
             public String getBotUsername () {
                 return "Ilsottomarinobot";
             }

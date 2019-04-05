@@ -1,3 +1,12 @@
+//manda con calma no html
+//Se prima manda tutto insieme, dopo manda_con_calma tiene l'rdine invertito
+
+
+
+package Ilsottomarinobot;
+
+
+
 
 
 import org.jsoup.Jsoup;
