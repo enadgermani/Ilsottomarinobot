@@ -30,7 +30,7 @@ public class HTMLreader {
     }
 
 
-    public ArrayList<String> agisci() {
+     public static ArrayList<String> agisci() {
 
 
         String prova = findLink();
@@ -87,7 +87,7 @@ public class HTMLreader {
         return articoli;
 
     }
-    public String findLink() {
+    public static String findLink() {
 
         System.out.println("cerco il link");
         String base = "https://thesubmarine.it/author/redazione/";

@@ -6,33 +6,85 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 public class Ilsottomarino_bot extends TelegramLongPollingBot {
     int timer = 5;
     String botToken="763191121:AAHtYs_DNdnL-R0DITBtbU61msE0vhAG4kA";   //inserire qui la stringa bot token
     ArrayList<String> articoli = new ArrayList<String>();
-    boolean reversed = false;
+    boolean ordine = true;
+    String welcome = "<b>Questa " +
+            "è Hello, World!, la nostra rassegna mattiniera di attualità, cultura e internet." +
+            "Tutte le mattine, un pugno di link da leggere, vedere e ascoltare.</b>";
 
 
 
     public void onUpdateReceived(Update update) {
+
+        leggi(new SendMessage(), update.getMessage().getText(),  update);
+
+//.setChatId(update.getMessage().getChatId())
         System.out.println(update.getMessage().getText());
 //        System.out.println(update.getMessage().getFrom().getFirstName());
-        String command = update.getMessage().getText();
+    }
+
+  public void  leggi(SendMessage msg, String command, Update update){
+
+        if (command.equals("/aggiorna")) {
+            aggiorna(msg, update);
+        }
 
 
 
+        if (command.equals("/manda_con_calma")) {
+            invia(msg, 5, update);
+        }
 
-        if (command.equals("/aggiorna")){
-            if(!articoli.isEmpty()){
+
+//mandamandamandansdasndnasdnasndnasndansdnasddddddddasddddddddddddddddddddddd
+        if (command.equals("/manda_tutto_insieme")) {
+            invia(msg, 0, update);
+
+        }
+      if (command.equals("/manda1")) {
+
+          msg.setChatId(update.getMessage().getChatId());
+          msg.setText("solito test");
+          try {
+              execute(msg);
+          } catch (TelegramApiException e) {
+              e.printStackTrace();
+          }
+      }
+    }
+
+
+
+    public String getBotUsername () {
+            return "Ilsottomarinobot";
+        }
+
+        public String getBotToken () {
+            return botToken;
+
+
+        }
+
+
+        public String creaLink () {
+            return null;
+        }
+
+        public void aggiorna (SendMessage msg, Update update){
+
+            if (!articoli.isEmpty()) {
                 articoli.clear();
             }
-            SendMessage  msg = new SendMessage();
 
-            HTMLreader h = new HTMLreader();
-            articoli = h.agisci();
+            articoli = HTMLreader.agisci();
             System.out.println("finito aggiornamento");
             msg.setChatId(update.getMessage().getChatId());
             msg.setText("finito di aggiornare");
@@ -41,66 +93,60 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
+
         }
 
-        if (command.equals("/timer")) {
+        public boolean oggi (String link){
+            Date date = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            String strDate = formatter.format(date);
 
-            timer = Integer.parseInt(update.getMessage().getText());
-        /*    HTMLreader h = new HTMLreader();
-            articoli = h.agisci();*/
-        }
-        if (command.equals("/manda1")) {
-            System.out.println("porcodio");
-            SendMessage  msg = new SendMessage();
-
-            msg.setText("porcodio");
-
-            msg.setChatId(update.getMessage().getChatId());
-
-
-            try {
-                execute(msg);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            if (link.contains(strDate)) {
+                return true;
             }
+            return false;
         }
-        if (command.equals("/manda_con_calma")) {
-            if(articoli.size()==0||articoli.isEmpty()){
-                aggiorna(update);
+
+    public void invia(SendMessage msg, int wait, Update update){
+
+        if(wait==0 && ordine == true) Collections.reverse(articoli);  //raffica va a contrario
+        // if(wait==0 && ordine == false) Collections.reverse(articoli);  //raffica corretta
+//      if(wait!=0 && ordine == true) Collections.reverse(articoli);
+        if(wait!=0 && ordine == false) Collections.reverse(articoli);    //relax
+
+
+            if(articoli.isEmpty()){
+                aggiorna(msg, update);
             }
-            SendMessage  msg = new SendMessage();
 
-
-            System.out.println("porcamadojnna");
-
-            if(reversed) {
+            if(!ordine && wait == 0) {
                 Collections.reverse(articoli);
-                reversed = true;
+                ordine = true;
             }
-
             //   msg.setText("porcamadonna");
             msg.setChatId(update.getMessage().getChatId());
             msg.setParseMode("html");
-            msg.setText("<b>Questa " +
-                    "è Hello, World!, la nostra rassegna mattiniera di attualità, cultura e internet." +
-                    "Tutte le mattine, un pugno di link da leggere, vedere e ascoltare.</b>");
+
+            msg.setText(welcome);
 
             try {
-                execute(msg);
+                execute(msg);           //invia welcome
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
 
-          //  msg.setParseMode();
-
             try {
 
-                for (int i = 0; i < articoli.size(); i++) {
-                    if (articoli.get(i) != null && !articoli.get(i).equals("")) {
+                for (int i = 1; i < articoli.size(); i++) {                         //invia ogni articolo
+                    if (articoli.get(i) != null
+                            & !articoli.get(i).equals("")                           //tranne vuoti
+                            & !articoli.get(i).contains(articoli.get(i-1)))         //tranne duplicati
+                    {
                         msg.setText(articoli.get(i));
                         execute(msg);
+                        //           clearWebhook();
                     }
-                     Thread.sleep(timer * 1000);
+                        Thread.sleep(wait * 1000);
                 }
 
             } catch (TelegramApiException e) {
@@ -109,64 +155,8 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            msg.setText("E' stato un piacere");
 
-            try {
-                execute(msg);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-//mandamandamandansdasndnasdnasndnasndansdnasddddddddasddddddddddddddddddddddd
-        if (command.equals("/manda_tutto_insieme")) {
-            SendMessage  msg = new SendMessage();
-
-
-            if(articoli.isEmpty()){
-                aggiorna(update);
-            }
-      //      System.out.println(articoli.get(0));
-
-        /*    System.out.println("porcamadojnna");
-            HTMLreader h = new HTMLreader();
-            ArrayList<String> articoli = h.agisci();
-         */
-        if(!reversed) {
-            Collections.reverse(articoli);
-            reversed = true;
-        }
-            //   msg.setText("porcamadonna");
-            msg.setChatId(update.getMessage().getChatId());
-            msg.setParseMode("html");
-
-            msg.setText("<b>Questa " +
-                            "è Hello, World!, la nostra rassegna mattiniera di attualità, cultura e internet." +
-                            "Tutte le mattine, un pugno di link da leggere, vedere e ascoltare.</b>");
-            try {
-                execute(msg);           //si rompe quisi rompe quisi rompe quisi rompe quisi rompe quisi rompe quisi rompe quisi rompe quisi rompe quisi rompe qui
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-
-            try {
-
-                for (int i = 1; i < articoli.size(); i++) {
-                    if (articoli.get(i) != null & !articoli.get(i).equals("")) {
-                        msg.setText(articoli.get(i));
-                        execute(msg);
-             //           clearWebhook();
-                    }
-                    //    Thread.sleep(timer * 1000);
-                }
-
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-
-            }
-
-            msg.setText("E' stato un piacere");
+        msg.setText("E' stato un piacere");
 
             try {
                 execute(msg);
@@ -175,43 +165,6 @@ public class Ilsottomarino_bot extends TelegramLongPollingBot {
             }
 
         }
-
-    }
-
-
-            public String getBotUsername () {
-                return "Ilsottomarinobot";
-            }
-
-            public String getBotToken () {
-                return botToken;
-
-
-            }
-
-
-            public String creaLink () {
-                return null;
-            }
-
-            public void aggiorna(Update update){
-                SendMessage  msg = new SendMessage();
-
-                if(!articoli.isEmpty()){
-                    articoli.clear();
-                }
-                HTMLreader h = new HTMLreader();
-                articoli = h.agisci();
-                System.out.println("finito aggiornamento");
-                msg.setChatId(update.getMessage().getChatId());
-                msg.setText("finito di aggiornare");
-                try {
-                    execute(msg);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-
-            }
 
 
     }
