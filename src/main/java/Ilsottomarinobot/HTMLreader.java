@@ -1,137 +1,106 @@
-//manda con calma no html
-//Se prima manda tutto insieme, dopo manda_con_calma tiene l'rdine invertito
 
 
+package com.amazonaws.lambda.demo;
 
-package Ilsottomarinobot;
-
-
-
-
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-
 public class HTMLreader {
-
     public HTMLreader() {
-
     }
 
     public HTMLreader(String link) {
-
-
     }
 
-
-     public static ArrayList<String> agisci() {
-
-
+    public static ArrayList<String> agisci(String start, String end) {
         String prova = findLink();
         System.out.println(prova);
-
         Document d = null;
+
         try {
             d = Jsoup.connect(prova).get();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException var21) {
+            var21.printStackTrace();
         }
+
         String html = d.toString();
-
-
         Document d2 = null;
+
         try {
             d2 = Jsoup.connect(prova).get();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException var20) {
+            var20.printStackTrace();
         }
+
         String source = d2.toString();
         System.out.println("seconda html trovata");
-
-        int inizio = source.indexOf("<h3><b><em>Questa " +
-                "è </em>Hello, World!, <em>la nostra rassegna mattiniera di attualità, cultura e internet." +
-                "</em></b> Tutte le mattine, un pugno di link da leggere, vedere e ascoltare.</h3>");
-
-        int fine = source.indexOf("Se ti piacciono Hello, World e the Submarine, ricorda di recensire la pagina su Facebook. A domani!");
-
-        String cut = source.substring((inizio + 188), (fine - 3)) + "§";
-
+        int inizio = source.indexOf(start);
+        int fine = source.indexOf(end);
+        String cut = source.substring(inizio + 188, fine - 3) + "§";
         System.out.println("inizio" + inizio);
         System.out.println("fine" + fine);
-        //  System.out.println(cut);
-
         Document doc = Jsoup.parse(cut);
         Elements p = doc.select("p");
-
-        ArrayList<String> articoli = new ArrayList<String>();
+        ArrayList<String> articoli = new ArrayList();
         String s = "";
         String s1 = "";
-        for (Element par : p) {
+        Iterator var16 = p.iterator();
+        
+        while(var16.hasNext()) {
+            Element par = (Element)var16.next();
             s = par.text();
             Elements a = par.select("a[href]");
-            for (Element links : a) {
+
+            for(Iterator var19 = a.iterator(); var19.hasNext(); s1 = "") {
+                Element links = (Element)var19.next();
                 s1 = s1.concat("  ");
                 s1 = s1.concat(links.attr("href"));
-                //      System.out.println(s + s1);
-                articoli.add(s + s1);
+                articoli.add(s + s1 + "¿º");
                 s = "";
-                s1 = "";
             }
         }
+
         return articoli;
-
     }
-    public static String findLink() {
 
+    public static String findLink() {
         System.out.println("cerco il link");
         String base = "https://thesubmarine.it/author/redazione/";
-        //   wd.get(base);
-        //   String html = wd.getPageSource();
-        //  System.out.println(html);
-
         Document d = null;
+
         try {
             d = Jsoup.connect(base).get();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException var13) {
+            var13.printStackTrace();
         }
+
         String html = d.toString();
         String html2 = html.substring(html.indexOf("div id=\"cb-content\" class=\"wrap cb-author-page cb-wrap-pad clearfix\">"));
-
         Document doc = Jsoup.parse(html2);
         Elements p = doc.select("h2");
-
-        //     ArrayList<String> articoliRedazione = new ArrayList<String>();
         String s = "";
         String s1 = "";
-        for (Element par : p) {
+        Iterator var9 = p.iterator();
+        if (!var9.hasNext()) {
+            return "ciao";
+        } else {
+            Element par = (Element)var9.next();
             s = par.text();
             Elements a = par.select("a[href]");
-            for (Element links : a) {
+
+            Element links;
+            for(Iterator var12 = a.iterator(); var12.hasNext(); s1 = s1.concat(links.attr("href"))) {
+                links = (Element)var12.next();
                 s1 = s1.concat("");
-                s1 = s1.concat(links.attr("href"));
             }
+
             System.out.println("link non ancora trovato");
             return s1;
-            // s = "";
-            //    s1 = "";
         }
-
-
-        return "ciao";
     }
 }
-
-
-
-
-
-
-
-
