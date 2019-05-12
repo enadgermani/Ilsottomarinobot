@@ -1,43 +1,63 @@
-package Ilsottomarinobot;
+package com.amazonaws.lambda.demo;
 
 
-import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+//import HTMLreader;
+import com.google.gson.Gson;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+
+public class LambdaFunctionHandler implements RequestHandler<Object, String> {
 
 
+    @Override
+    public String handleRequest(Object input, Context context) {
+        context.getLogger().log("Input: " + input);
 
-    public class MainClass{
-//            implements RequestHandler<InputStream, String> {
-      //  private static final ObjectMapper MAPPER = new ObjectMapper();
-
-
-        public static void main (String []args) {
-            Update update;
-            System.out.println("provo creazione BOT");
-
-
-            bot();
-            System.out.println("BOT CREATO");
-
-
-            System.out.println("funziona?");
-        }
-
-    public static void bot(){
-        ApiContextInitializer.init();
-       TelegramBotsApi  telegramBotsApi = new TelegramBotsApi();
-        try {
-            telegramBotsApi.registerBot(new Ilsottomarino_bot());
-            System.out.println("arrivo qui");
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-
-
+   //   ArrayList<String>
+    ArrayList <String> array=HTMLreader.agisci(inizio, fine);
+    String a = array.toString();
+    System.out.println(a);
+    String jsonString = "errore";
+	try {
+		jsonString = new JSONObject()
+									.put("statusCode", 200)
+									.put("body", a)
+									.toString();
+	} catch (JSONException e) { 
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		System.out.println("entro in secondo tentativo");
+		try {															//riprova
+		    ArrayList <String> array2=HTMLreader.agisci(inizio2, fine);
+		    String a2 = array.toString();
+			jsonString = new JSONObject()
+										.put("statusCode", 200)
+										.put("body", a2)
+										.toString();
+		} catch (JSONException ex) {
+		System.out.println("erroe nela formazione di JsonString");
+		return "L'errore sarà riportato agli sviluppatori.\nPerdonaci "+" "+HTMLreader.findLink() ;
+		
+	}
+	}
+   //   String json = new Gson().toJson(a);       
+    //  System.out.print(json);
+        // TODO: implement your handler
+        return jsonString;
     }
+    
+String inizio=    "<h3><b><em>Questa " +
+    "è </em>Hello, World!, <em>la nostra rassegna mattiniera di attualità, cultura e internet." +
+    "</em></b> Tutte le mattine, un pugno di link da leggere, vedere e ascoltare.</h3>";
 
-
-
-    }
+String inizio2 ="<h3><b><em>Questa è </em>Hello, World!";
+String fine = "Se ti piacciono Hello, World e the Submarine, ricorda di recensire la pagina su Facebook. A domani!";
+}
